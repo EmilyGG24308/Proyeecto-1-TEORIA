@@ -4,8 +4,13 @@ from shunting_yard import a_postfix
 from thompson import construir_afn
 from subconjuntos import construir_afd
 from minimizacion import minimizar_afd
+from simulacion import simular_afn, simular_afd
 
-sys.stdout.reconfigure(encoding="utf-8")  # para poder imprimir el simbolo epsilon 
+sys.stdout.reconfigure(encoding="utf-8")  # para poder imprimir el simbolo epsilon
+
+# Cadena de prueba temporal (la del ejemplo del enunciado).
+# En FASE 7 definimos como se va a ingresar w de verdad.
+CADENA_PRUEBA = "babbaaaa"
 
 
 def main():
@@ -27,6 +32,16 @@ def main():
             afd_min = minimizar_afd(afd)
             print("AFD minimizado:")
             afd_min.imprimir()
+            print()
+
+            w = CADENA_PRUEBA
+            r_afn = "si" if simular_afn(afn, w) else "no"
+            r_afd = "si" if simular_afd(afd, w) else "no"
+            r_min = "si" if simular_afd(afd_min, w) else "no"
+            print(f'Cadena w = "{w}"')
+            print(f"  Pertenece a L(r) segun AFN:         {r_afn}")
+            print(f"  Pertenece a L(r) segun AFD:         {r_afd}")
+            print(f"  Pertenece a L(r) segun AFD minimo:  {r_min}")
             print()
 
 
