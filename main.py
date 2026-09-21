@@ -8,41 +8,55 @@ from simulacion import simular_afn, simular_afd
 
 sys.stdout.reconfigure(encoding="utf-8")  # para poder imprimir el simbolo epsilon
 
-# Cadena de prueba temporal (la del ejemplo del enunciado).
-# En FASE 7 definimos como se va a ingresar w de verdad.
-CADENA_PRUEBA = "babbaaaa"
+
+def procesar_regex(regex, w):
+    postfix = a_postfix(regex)
+    print(f"Infix:   {regex}")
+    print(f"Postfix: {postfix}")
+
+    afn = construir_afn(postfix)
+    afn.imprimir()
+    print()
+
+    afd = construir_afd(afn)
+    print("AFD (por construccion de subconjuntos):")
+    afd.imprimir()
+    print()
+
+    afd_min = minimizar_afd(afd)
+    print("AFD minimizado:")
+    afd_min.imprimir()
+    print()
+
+    r_afn = "si" if simular_afn(afn, w) else "no"
+    r_afd = "si" if simular_afd(afd, w) else "no"
+    r_min = "si" if simular_afd(afd_min, w) else "no"
+    print(f'Cadena w = "{w}"')
+    print(f"  Pertenece a L(r) segun AFN:         {r_afn}")
+    print(f"  Pertenece a L(r) segun AFD:         {r_afd}")
+    print(f"  Pertenece a L(r) segun AFD minimo:  {r_min}")
 
 
 def main():
-    with open("input.txt", encoding="utf-8") as f:
-        for linea in f:
-            regex = linea.strip()
-            if not regex:
-                continue
-            postfix = a_postfix(regex)
-            print(f"Infix:   {regex}")
-            print(f"Postfix: {postfix}")
-            afn = construir_afn(postfix)
-            afn.imprimir()
-            print()
-            afd = construir_afd(afn)
-            print("AFD (por construccion de subconjuntos):")
-            afd.imprimir()
-            print()
-            afd_min = minimizar_afd(afd)
-            print("AFD minimizado:")
-            afd_min.imprimir()
-            print()
+    w = sys.argv[1] if len(sys.argv) > 1 else input("Ingrese la cadena w a evaluar: ").strip()
 
-            w = CADENA_PRUEBA
-            r_afn = "si" if simular_afn(afn, w) else "no"
-            r_afd = "si" if simular_afd(afd, w) else "no"
-            r_min = "si" if simular_afd(afd_min, w) else "no"
-            print(f'Cadena w = "{w}"')
-            print(f"  Pertenece a L(r) segun AFN:         {r_afn}")
-            print(f"  Pertenece a L(r) segun AFD:         {r_afd}")
-            print(f"  Pertenece a L(r) segun AFD minimo:  {r_min}")
-            print()
+    try:
+        with open("input.txt", encoding="utf-8") as f:
+            lineas = f.readlines()
+    except FileNotFoundError:
+        print("Error: no se encontro el archivo input.txt")
+        return
+
+    for num_linea, linea in enumerate(lineas, start=1):
+        regex = linea.strip()
+        if not regex:
+            continue
+        print("=" * 50)
+        try:
+            procesar_regex(regex, w)
+        except Exception as error:
+            print(f"[Linea {num_linea}] Error procesando '{regex}': {error}")
+        print()
 
 
 if __name__ == "__main__":

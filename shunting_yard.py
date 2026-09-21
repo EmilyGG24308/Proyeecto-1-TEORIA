@@ -36,11 +36,16 @@ def a_postfix(regex):
         elif c == ')':
             while pila and pila[-1] != '(':
                 salida.append(pila.pop())
+            if not pila:
+                raise ValueError("parentesis de cierre sin su pareja de apertura")
             pila.pop()  # descarta el '('
         else:  # es un operador: | . *
             while pila and pila[-1] != '(' and PRECEDENCIA[pila[-1]] >= PRECEDENCIA[c]:
                 salida.append(pila.pop())
             pila.append(c)
     while pila:
-        salida.append(pila.pop())
+        tope = pila.pop()
+        if tope == '(':
+            raise ValueError("parentesis de apertura sin cerrar")
+        salida.append(tope)
     return ''.join(salida)
