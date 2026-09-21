@@ -2,6 +2,7 @@ import sys
 
 from shunting_yard import a_postfix
 from thompson import construir_afn
+from subconjuntos import construir_afd
 
 sys.stdout.reconfigure(encoding="utf-8")  # para poder imprimir el simbolo epsilon (ε) en Windows
 
@@ -17,6 +18,10 @@ def main():
             print(f"Postfix: {postfix}")
             afn = construir_afn(postfix)
             afn.imprimir()
+            print()
+            afd = construir_afd(afn)
+            print("AFD (por construccion de subconjuntos):")
+            afd.imprimir()
             print()
 
 
